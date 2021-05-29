@@ -51,9 +51,9 @@ public class ShlinkCreator extends ListenerAdapter {
                     customSlug = cmdSplit[2];
                 }
 
-                String testGenerated = String.format(Constants.POST_BODY, longUrl, customSlug);
+                String filledPostBody = StaticMethods.generatePostBody(longUrl, customSlug);
                 
-                channel.sendMessage("TODO: " + testGenerated).queue();
+                channel.sendMessage("TODO: " + filledPostBody).queue();
                 return;
             }
         }

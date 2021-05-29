@@ -17,7 +17,8 @@ public final class Constants {
     );
     public static final short API_VERSION = 2;
     public static final String POST_URL = "/rest/v" + API_VERSION + "/short-urls";
-    public static final String POST_BODY = "{\"longUrl\": \"%1$s\", \"customSlug\": \"%2$s\", \"findIfExists\": true, \"validateUrl\": true}";
+    public static final String POST_BODY = "{\"longUrl\": \"%1$s\",%2$s \"findIfExists\": true, \"validateUrl\": true}";
+    public static final String PART_CUSTOM_SLUG = " \"customSlug\": \"%1$s\",";
 
     private Constants() {
     }

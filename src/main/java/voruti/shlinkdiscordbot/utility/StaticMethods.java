@@ -14,4 +14,12 @@ public final class StaticMethods {
         return cmdList.parallelStream()
                 .anyMatch(msgContent::contains);
     }
+    
+    public static String generatePostBody(String longUrl, String customSlug) {
+        String customSlugPart = "";
+        if (customSlug != null) {
+            customSlugPart = String.format(Constants.PART_CUSTOM_SLUG, customSlug);
+        }
+        return String.format(Constants.POST_BODY, longUrl, customSlugPart);
+    }
 }
