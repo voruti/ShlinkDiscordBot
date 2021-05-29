@@ -64,10 +64,14 @@ public class ShlinkCreator extends ListenerAdapter {
                     return;
                 }
                 String longUrl = cmdSplit[1];
+                if (!longUrl.startsWith("http")) {
+                    longUrl = "http://" + longUrl;
+                }
                 String customSlug = null;
                 if (cmdSplit.length > 2) {
                     customSlug = cmdSplit[2];
                 }
+                LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
 
                 // json structure:
                 Map<Object, Object> data = new HashMap<>();
