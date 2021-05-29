@@ -79,6 +79,7 @@ public class ShlinkCreator extends ListenerAdapter {
                         .uri(URI.create(shlinkUrl + Constants.POST_URL))
                         .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
                         .setHeader("Content-Type", "application/json")
+                        .setHeader("Accept", "application/json")
                         .POST(buildJsonFromMap(data))
                         .build();
 
@@ -90,7 +91,7 @@ public class ShlinkCreator extends ListenerAdapter {
                     channel.sendMessage("Error on connecting to Shlink server!").queue();
                     return;
                 }
-                
+
                 channel.sendMessage("TODO: " + response).queue();
                 return;
             }
