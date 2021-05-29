@@ -34,7 +34,7 @@ public class ShlinkCreator extends ListenerAdapter {
 
             // respond with help text, if requested:
             if (StaticMethods.messageMatchesCmd(msg, Constants.HELP_CMD)) {
-                channel.sendMessage("TODO: help").queue();
+                channel.sendMessage("!addShlink <long URL> [custom slug]\t:\tCreate a short link from <long URL> with optional [custom slug].").queue();
                 return;
             }
 
