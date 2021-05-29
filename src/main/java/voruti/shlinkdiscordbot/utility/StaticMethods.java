@@ -28,7 +28,7 @@ public final class StaticMethods {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("{");
         for (Map.Entry<Object, Object> entry : data.entrySet()) {
-            if (stringBuilder.length() > 0) {
+            if (stringBuilder.length() > 1) {
                 stringBuilder.append(",");
             }
             stringBuilder
