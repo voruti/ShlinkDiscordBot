@@ -34,13 +34,26 @@ public class ShlinkCreator extends ListenerAdapter {
 
             // respond with help text, if requested:
             if (StaticMethods.messageMatchesCmd(msg, Constants.HELP_CMD)) {
-                channel.sendMessage("!addShlink <long URL> [custom slug]\t:\tCreate a short link from <long URL> with optional [custom slug].").queue();
+                channel.sendMessage(Constants.CMD_CHAR + "addShlink <long URL> [custom slug]\t:\tCreate a short link from <long URL> with optional [custom slug].").queue();
                 return;
             }
 
             // add short url:
             if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
-                channel.sendMessage("TODO: Added xyz").queue();
+                String[] cmdSplit = msg.getContentRaw().split(" ");
+                if (cmdSplit.length < 2) {
+                    channel.sendMessage("Wrong usage of command; see " + Constants.CMD_CHAR + "help").queue();
+                    return;
+                }
+                String longUrl = cmdSplit[1];
+                String customSlug = null;
+                if (cmdSplit.length > 2) {
+                    customSlug = cmdSplit[2];
+                }
+
+                String testGenerated = String.format(Constants.POST_BODY, longUrl, customSlug);
+                
+                channel.sendMessage("TODO: " + testGenerated).queue();
                 return;
             }
         }
