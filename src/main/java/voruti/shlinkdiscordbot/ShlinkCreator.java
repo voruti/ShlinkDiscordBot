@@ -5,6 +5,9 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +15,8 @@ import voruti.shlinkdiscordbot.utility.Constants;
 import voruti.shlinkdiscordbot.utility.StaticMethods;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
-
-import static voruti.shlinkdiscordbot.utility.StaticMethods.buildJsonFromMap;
 
 public class ShlinkCreator extends ListenerAdapter {
 
@@ -75,18 +73,17 @@ public class ShlinkCreator extends ListenerAdapter {
                 data.put("findIfExists", true);
                 data.put("validateUrl", true);
 
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(shlinkUrl + Constants.POST_URL))
-                        .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
-                        .setHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .setHeader("Accept", "*/*")
-                        .POST(buildJsonFromMap(data))
+                RequestBody body = RequestBody.create(StaticMethods.buildJsonFromMap(data), Constants.TYPE_JSON);
+                Request request = new Request.Builder()
+                        .url(shlinkUrl + Constants.POST_URL)
+                        .header(Constants.API_KEY_HEADER, shlinkApiKey)
+                        .post(body)
                         .build();
 
-                HttpResponse<String> response;
+                Response response;
                 try {
-                    response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                } catch (IOException | InterruptedException e) {
+                    response = httpClient.newCall(request).execute();
+                } catch (IOException e) {
                     LOGGER.warn("Error on connecting to Shlink server", e);
                     channel.sendMessage("Error on connecting to Shlink server!").queue();
                     return;
