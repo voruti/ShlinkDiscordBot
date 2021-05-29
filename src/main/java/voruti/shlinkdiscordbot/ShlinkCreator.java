@@ -58,14 +58,13 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
 
                 String filledPostBody = StaticMethods.generatePostBody(longUrl, customSlug);
-                var bla = HttpRequest.BodyPublishers.ofString(filledPostBody);
-                LOGGER.info("body: {}", bla);
 
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(shlinkUrl + Constants.POST_URL))
                         .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
-                        .POST(bla)
+                        .setHeader("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(filledPostBody))
                         .build();
                 LOGGER.debug("request: {}", request);
 
