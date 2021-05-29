@@ -62,6 +62,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(shlinkUrl + Constants.POST_URL))
+                        .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
                         .POST(HttpRequest.BodyPublishers.ofString(filledPostBody))
                         .build();
 
@@ -69,7 +70,8 @@ public class ShlinkCreator extends ListenerAdapter {
                 try {
                     response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 } catch (IOException | InterruptedException e) {
-                    channel.sendMessage("Error on connection to Shlink server!").queue();
+                    LOGGER.warn("Error on connecting to Shlink server", e);
+                    channel.sendMessage("Error on connecting to Shlink server!").queue();
                     return;
                 }
 
