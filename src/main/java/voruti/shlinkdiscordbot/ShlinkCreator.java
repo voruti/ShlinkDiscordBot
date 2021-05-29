@@ -78,8 +78,8 @@ public class ShlinkCreator extends ListenerAdapter {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(shlinkUrl + Constants.POST_URL))
                         .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
-                        .setHeader("Content-Type", "application/json")
-                        .setHeader("Accept", "application/json")
+                        .setHeader("Content-Type", "application/x-www-form-urlencoded")
+                        .setHeader("Accept", "*/*")
                         .POST(buildJsonFromMap(data))
                         .build();
 
