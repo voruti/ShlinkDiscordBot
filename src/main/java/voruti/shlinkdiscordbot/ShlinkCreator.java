@@ -64,7 +64,7 @@ public class ShlinkCreator extends ListenerAdapter {
                     customSlug = cmdSplit[2];
                 }
 
-                // form parameters
+                // json structure:
                 Map<Object, Object> data = new HashMap<>();
                 data.put("longUrl", longUrl);
                 if (customSlug != null) {
@@ -90,8 +90,23 @@ public class ShlinkCreator extends ListenerAdapter {
                     channel.sendMessage("Error on connecting to Shlink server!").queue();
                     return;
                 }
+                if (!response.isSuccessful()) {
+                    LOGGER.info("Error with Shlink's response");
+                    channel.sendMessage("Error with Shlink's response!").queue();
+                    return;
+                }
 
-                channel.sendMessage("TODO: " + response).queue();
+                String responseJson;
+                try {
+                    responseJson = response.body().string();
+                } catch (IOException | NullPointerException e) {
+                    LOGGER.warn("Error on extracting response", e);
+                    channel.sendMessage("Error on extracting response!").queue();
+                    return;
+                }
+
+                
+                channel.sendMessage("TODO: " + responseJson).queue();
                 return;
             }
         }
