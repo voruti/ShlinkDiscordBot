@@ -19,6 +19,7 @@ public final class Constants {
     public static final String POST_URL = "/rest/v" + API_VERSION + "/short-urls";
     public static final String POST_BODY = "{\"longUrl\": \"%1$s\",%2$s \"findIfExists\": true, \"validateUrl\": true}";
     public static final String PART_CUSTOM_SLUG = " \"customSlug\": \"%1$s\",";
+    public static final String API_KEY_HEADER = "X-Api-Key";
 
     private Constants() {
     }

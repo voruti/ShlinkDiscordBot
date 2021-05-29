@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 import voruti.shlinkdiscordbot.utility.Constants;
 import voruti.shlinkdiscordbot.utility.StaticMethods;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 public class ShlinkCreator extends ListenerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShlinkCreator.class);
@@ -52,8 +58,22 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
 
                 String filledPostBody = StaticMethods.generatePostBody(longUrl, customSlug);
-                
-                channel.sendMessage("TODO: " + filledPostBody).queue();
+
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(shlinkUrl + Constants.POST_URL))
+                        .POST(HttpRequest.BodyPublishers.ofString(filledPostBody))
+                        .build();
+
+                HttpResponse<String> response;
+                try {
+                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                } catch (IOException | InterruptedException e) {
+                    channel.sendMessage("Error on connection to Shlink server!").queue();
+                    return;
+                }
+
+                channel.sendMessage("TODO: " + response).queue();
                 return;
             }
         }
