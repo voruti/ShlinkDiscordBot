@@ -1,4 +1,4 @@
 *
-/src
-build.gradle
-settings.gradle
+!/src
+!build.gradle
+!settings.gradle
