@@ -1,5 +1,7 @@
 package voruti.shlinkdiscordbot;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -17,6 +19,7 @@ import voruti.shlinkdiscordbot.utility.StaticMethods;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ShlinkCreator extends ListenerAdapter {
 
@@ -28,6 +31,7 @@ public class ShlinkCreator extends ListenerAdapter {
 
     // one instance, reuse
     private final OkHttpClient httpClient;
+    private final ObjectMapper objectMapper;
 
     public ShlinkCreator(long botId, String shlinkUrl, String shlinkApiKey) {
         this.botId = botId;
@@ -35,6 +39,7 @@ public class ShlinkCreator extends ListenerAdapter {
         this.shlinkApiKey = shlinkApiKey;
 
         this.httpClient = new OkHttpClient();
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -98,7 +103,7 @@ public class ShlinkCreator extends ListenerAdapter {
 
                 String responseJson;
                 try {
-                    responseJson = response.body().string();
+                    responseJson = Objects.requireNonNull(response.body()).string();
                     LOGGER.debug("responseJson: {}", responseJson);
                 } catch (IOException | NullPointerException e) {
                     LOGGER.warn("Error on extracting response", e);
@@ -106,8 +111,17 @@ public class ShlinkCreator extends ListenerAdapter {
                     return;
                 }
 
-                
-                channel.sendMessage("TODO: " + responseJson).queue();
+                String extractedShortUrl;
+                try {
+                    extractedShortUrl = objectMapper.readTree(responseJson).path("shortUrl").asText();
+                } catch (JsonProcessingException e) {
+                    LOGGER.warn("Error on parsing json", e);
+                    channel.sendMessage("Error on parsing json!").queue();
+                    return;
+                }
+
+                LOGGER.debug("extractedShortUrl: {}", extractedShortUrl);
+                channel.sendMessage("Here you go: " + extractedShortUrl).queue();
                 return;
             }
         }
