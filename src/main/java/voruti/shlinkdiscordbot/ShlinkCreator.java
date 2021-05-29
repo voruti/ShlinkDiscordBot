@@ -73,7 +73,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 data.put("findIfExists", true);
                 data.put("validateUrl", true);
                 String jsonBody = StaticMethods.buildJsonFromMap(data);
-                LOGGER.debug(jsonBody);
+                LOGGER.debug("jsonBody: {}", jsonBody);
 
                 RequestBody body = RequestBody.create(jsonBody, Constants.TYPE_JSON);
                 Request request = new Request.Builder()
@@ -99,6 +99,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 String responseJson;
                 try {
                     responseJson = response.body().string();
+                    LOGGER.debug("responseJson: {}", responseJson);
                 } catch (IOException | NullPointerException e) {
                     LOGGER.warn("Error on extracting response", e);
                     channel.sendMessage("Error on extracting response!").queue();
