@@ -15,6 +15,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+import static voruti.shlinkdiscordbot.utility.StaticMethods.buildJsonFromMap;
 
 public class ShlinkCreator extends ListenerAdapter {
 
@@ -24,10 +28,15 @@ public class ShlinkCreator extends ListenerAdapter {
     private final String shlinkUrl;
     private final String shlinkApiKey;
 
+    // one instance, reuse
+    private final HttpClient httpClient;
+
     public ShlinkCreator(long botId, String shlinkUrl, String shlinkApiKey) {
         this.botId = botId;
         this.shlinkUrl = shlinkUrl;
         this.shlinkApiKey = shlinkApiKey;
+
+        this.httpClient = HttpClient.newHttpClient();
     }
 
     @Override
@@ -57,26 +66,31 @@ public class ShlinkCreator extends ListenerAdapter {
                     customSlug = cmdSplit[2];
                 }
 
-                String filledPostBody = StaticMethods.generatePostBody(longUrl, customSlug);
+                // form parameters
+                Map<Object, Object> data = new HashMap<>();
+                data.put("longUrl", longUrl);
+                if (customSlug != null) {
+                    data.put("customSlug", customSlug);
+                }
+                data.put("findIfExists", true);
+                data.put("validateUrl", true);
 
-                HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(shlinkUrl + Constants.POST_URL))
                         .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
                         .setHeader("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(filledPostBody))
+                        .POST(buildJsonFromMap(data))
                         .build();
-                LOGGER.debug("request: {}", request);
 
                 HttpResponse<String> response;
                 try {
-                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
                 } catch (IOException | InterruptedException e) {
                     LOGGER.warn("Error on connecting to Shlink server", e);
                     channel.sendMessage("Error on connecting to Shlink server!").queue();
                     return;
                 }
-
+                
                 channel.sendMessage("TODO: " + response).queue();
                 return;
             }
