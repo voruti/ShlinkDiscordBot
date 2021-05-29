@@ -34,11 +34,15 @@ public class ShlinkCreator extends ListenerAdapter {
 
             // respond with help text, if requested:
             if (StaticMethods.messageMatchesCmd(msg, Constants.HELP_CMD)) {
-                channel.sendMessage("TODO").queue();
+                channel.sendMessage("TODO: help").queue();
                 return;
             }
 
-            
+            // add short url:
+            if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
+                channel.sendMessage("TODO: Added xyz").queue();
+                return;
+            }
         }
     }
 }

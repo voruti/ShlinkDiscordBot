@@ -10,6 +10,11 @@ public final class Constants {
             CMD_CHAR + "was", CMD_CHAR + "what",
             CMD_CHAR + "hilfe", CMD_CHAR + "help"
     );
+    public static final List<String> ADD_SHLINK_CMD = Arrays.asList(
+            CMD_CHAR + "addShlink", CMD_CHAR + "add Shlink",
+            CMD_CHAR + "addshlink", CMD_CHAR + "add shlink",
+            CMD_CHAR + "addSL"
+    );
 
     private Constants() {
     }
