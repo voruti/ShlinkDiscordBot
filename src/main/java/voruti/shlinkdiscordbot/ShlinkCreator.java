@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import voruti.shlinkdiscordbot.utility.StaticMethods;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
@@ -29,14 +29,14 @@ public class ShlinkCreator extends ListenerAdapter {
     private final String shlinkApiKey;
 
     // one instance, reuse
-    private final HttpClient httpClient;
+    private final OkHttpClient httpClient;
 
     public ShlinkCreator(long botId, String shlinkUrl, String shlinkApiKey) {
         this.botId = botId;
         this.shlinkUrl = shlinkUrl;
         this.shlinkApiKey = shlinkApiKey;
 
-        this.httpClient = HttpClient.newHttpClient();
+        this.httpClient = new OkHttpClient();
     }
 
     @Override
