@@ -65,6 +65,7 @@ public class ShlinkCreator extends ListenerAdapter {
                         .setHeader(Constants.API_KEY_HEADER, shlinkApiKey)
                         .POST(HttpRequest.BodyPublishers.ofString(filledPostBody))
                         .build();
+                LOGGER.debug("{}", request);
 
                 HttpResponse<String> response;
                 try {
