@@ -13,7 +13,7 @@ public final class Constants {
     public static final List<String> ADD_SHLINK_CMD = Arrays.asList(
             CMD_CHAR + "addShlink", CMD_CHAR + "add Shlink",
             CMD_CHAR + "addshlink", CMD_CHAR + "add shlink",
-            CMD_CHAR + "addSL"
+            CMD_CHAR + "addSL", CMD_CHAR + "addsl"
     );
 
     private Constants() {
