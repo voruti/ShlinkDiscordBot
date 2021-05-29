@@ -72,8 +72,10 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
                 data.put("findIfExists", true);
                 data.put("validateUrl", true);
+                String jsonBody = StaticMethods.buildJsonFromMap(data);
+                LOGGER.debug(jsonBody);
 
-                RequestBody body = RequestBody.create(StaticMethods.buildJsonFromMap(data), Constants.TYPE_JSON);
+                RequestBody body = RequestBody.create(jsonBody, Constants.TYPE_JSON);
                 Request request = new Request.Builder()
                         .url(shlinkUrl + Constants.POST_URL)
                         .header(Constants.API_KEY_HEADER, shlinkApiKey)
