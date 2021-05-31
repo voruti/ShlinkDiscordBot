@@ -100,8 +100,13 @@ public class ShlinkCreator extends ListenerAdapter {
                     return;
                 }
                 if (!response.isSuccessful()) {
-                    LOGGER.info("Error with Shlink's response {}", response);
-                    channel.sendMessage("Error with Shlink's response " + response + "!").queue();
+                    String responseBody = null;
+                    try {
+                        responseBody = Objects.requireNonNull(response.body()).string();
+                    } catch (IOException | NullPointerException ignored) {
+                    }
+                    LOGGER.info("Error with Shlink's response {} with body {}", response, responseBody);
+                    channel.sendMessage("Error with Shlink's response!").queue();
 
                     response.close();
                     return;
