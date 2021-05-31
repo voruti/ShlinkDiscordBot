@@ -91,9 +91,9 @@ public class ShlinkCreator extends ListenerAdapter {
                         .post(body)
                         .build();
 
-                Response response;
-                try (Response r = httpClient.newCall(request).execute()) {
-                    response = r;
+                Response response = null;
+                try {
+                    response = httpClient.newCall(request).execute();
                 } catch (IOException e) {
                     LOGGER.warn("Error on connecting to Shlink server", e);
                     channel.sendMessage("Error on connecting to Shlink server!").queue();
@@ -102,6 +102,8 @@ public class ShlinkCreator extends ListenerAdapter {
                 if (!response.isSuccessful()) {
                     LOGGER.info("Error with Shlink's response");
                     channel.sendMessage("Error with Shlink's response!").queue();
+
+                    response.close();
                     return;
                 }
 
@@ -113,6 +115,8 @@ public class ShlinkCreator extends ListenerAdapter {
                     LOGGER.warn("Error on extracting response", e);
                     channel.sendMessage("Error on extracting response!").queue();
                     return;
+                } finally {
+                    response.close();
                 }
 
                 String extractedShortUrl;
