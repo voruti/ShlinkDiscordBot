@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import voruti.shlinkdiscordbot.utility.StaticMethods;
 
 import javax.security.auth.login.LoginException;
 
@@ -21,11 +22,15 @@ public class Main {
      * @throws InterruptedException if this thread is interrupted while waiting
      */
     public Main() throws InterruptedException {
-        LOGGER.info("Started");
-
         String discordBotToken = System.getenv("DISCORD_BOT_TOKEN");
         String shlinkUrl = System.getenv("SHLINK_URL");
         String shlinkApiKey = System.getenv("SHLINK_API_KEY");
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Using Discord bot token {}", StaticMethods.hideSecret(discordBotToken));
+            LOGGER.debug("Using Shlink url {}", shlinkUrl);
+            LOGGER.debug("Using Shlink api key {}", StaticMethods.hideSecret(shlinkApiKey));
+        }
 
         try {
             JDA jda = JDABuilder.createDefault(discordBotToken)
@@ -33,6 +38,7 @@ public class Main {
             jda.awaitReady();
 
             jda.addEventListener(new ShlinkCreator(jda.getSelfUser().getIdLong(), shlinkUrl, shlinkApiKey));
+            LOGGER.info("ShlinkCreator event listener added");
         } catch (LoginException | IllegalArgumentException e) {
             LOGGER.error("Exception occurred", e);
         }
@@ -40,6 +46,8 @@ public class Main {
 
 
     public static void main(String[] args) throws InterruptedException {
+        LOGGER.info("Starting {}", Main.class.getName());
         new Main();
+        LOGGER.info("Finished start of {}", Main.class.getName());
     }
 }

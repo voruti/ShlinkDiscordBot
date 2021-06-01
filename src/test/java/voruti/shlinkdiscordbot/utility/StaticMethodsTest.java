@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -100,5 +102,33 @@ class StaticMethodsTest {
 
         // assert:
         assertEquals(objectMapper.readTree(jsonExpected), objectMapper.readTree(jsonResult));
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "example@example.com, exa***com",
+            "E0-E2-3B-C7-3F-1E, E0-***-1E",
+            "Ip0864vBxZMT9KVD-dePvitWL9BF8XhyC-1W4v13TsBpzjv9eM, Ip08***v9eM"
+    })
+    void hideSecret_ExampleMail(String secret, String hiddenExpected) {
+        // act:
+        String hiddenResult = StaticMethods.hideSecret(secret);
+
+        // assert:
+        assertEquals(hiddenExpected, hiddenResult);
+    }
+
+    @Test
+    void hideSecret_Null() {
+        // arrange:
+        String secret = null;
+        String hiddenExpected = null;
+
+        // act:
+        String hiddenResult = StaticMethods.hideSecret(secret);
+
+        // assert:
+        assertEquals(hiddenExpected, hiddenResult);
     }
 }

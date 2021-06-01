@@ -1,6 +1,7 @@
 package voruti.shlinkdiscordbot.utility;
 
 import net.dv8tion.jda.api.entities.Message;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public final class StaticMethods {
     public static boolean messageMatchesCmd(Message msg, List<String> cmdList) {
         final String msgContent = msg.getContentRaw();
         return cmdList.parallelStream()
-                .anyMatch(msgContent::contains);
+                .anyMatch(msgContent::startsWith);
     }
 
     /**
@@ -54,5 +55,28 @@ public final class StaticMethods {
         }
         stringBuilder.append("}");
         return stringBuilder.toString();
+    }
+
+    /**
+     * Hides parts of the input {@link String}.
+     *
+     * @param secret the {@link String} to hide parts from
+     * @return the {@link String} with some parts hidden
+     */
+    public static String hideSecret(@Nullable String secret) {
+        if (secret == null) {
+            return null;
+        }
+
+        int proportionalLength = (int) (0.2 * secret.length());
+        if (proportionalLength < 2) {
+            proportionalLength = 2;
+        }
+        if (proportionalLength > 4) {
+            proportionalLength = 4;
+        }
+        String prefix = secret.substring(0, proportionalLength);
+        String suffix = secret.substring(secret.length() - proportionalLength);
+        return prefix + "***" + suffix;
     }
 }
