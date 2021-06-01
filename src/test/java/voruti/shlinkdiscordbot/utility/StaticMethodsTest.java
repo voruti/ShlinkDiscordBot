@@ -93,8 +93,8 @@ class StaticMethodsTest {
         String jsonExpected = "{" +
                 "\"longUrl\":\"example.com\"," +
                 "\"customSlug\":\"example\"," +
-                "\"findIfExists\":\"true\"," +
-                "\"validateUrl\":\"true\"" +
+                "\"findIfExists\":true," +
+                "\"validateUrl\":true" +
                 "}";
 
         // act:

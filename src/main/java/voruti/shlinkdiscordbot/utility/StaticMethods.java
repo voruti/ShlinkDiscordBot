@@ -1,5 +1,7 @@
 package voruti.shlinkdiscordbot.utility;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +12,9 @@ import java.util.Map;
  * Class to contain frequently used (static) methods that require no context and can be accessed from any other class.
  */
 public final class StaticMethods {
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
 
     /**
      * "Disabled" constructor.
@@ -34,27 +39,15 @@ public final class StaticMethods {
     /**
      * Creates a JSON {@link String} from a {@link Map}. Only works for primitive types as key and value inside the {@link Map}.
      *
-     * @param data the {@link Map} that should be converted to a JSON {@link String}
-     * @return the JSON {@link String}
+     * @param objectObjectMap the {@link Map} that should be converted to a JSON {@link String}
+     * @throws IllegalArgumentException if the {@link Map} can't be converted to JSON
      */
-    public static String buildJsonFromMap(Map<Object, Object> data) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{");
-        for (Map.Entry<Object, Object> entry : data.entrySet()) {
-            if (stringBuilder.length() > 1) {
-                stringBuilder.append(",");
-            }
-            stringBuilder
-                    .append("\"")
-                    .append(entry.getKey().toString())
-                    .append("\"")
-                    .append(":")
-                    .append("\"")
-                    .append(entry.getValue().toString())
-                    .append("\"");
+    public static String buildJsonFromMap(Map<Object, Object> objectObjectMap) {
+        try {
+            return objectMapper.writeValueAsString(objectObjectMap);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException();
         }
-        stringBuilder.append("}");
-        return stringBuilder.toString();
     }
 
     /**
