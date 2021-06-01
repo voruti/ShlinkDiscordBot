@@ -10,6 +10,9 @@ import java.util.List;
  */
 public final class Constants {
 
+    /**
+     * The prefix used for all bot commands.
+     */
     public static final String CMD_CHAR = "!";
     /**
      * {@link String Strings} the user can use for the "help" command.
