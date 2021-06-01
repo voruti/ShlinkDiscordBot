@@ -123,7 +123,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
 
                 LOGGER.info("Error with Shlink's response {} with body {} and bodyDetails {}", response, responseJson, bodyDetails);
-                return "Error with Shlink's response: " + bodyDetails + "!";
+                return "Error with Shlink's response: \"" + bodyDetails + "\"!";
             }
 
             try {
