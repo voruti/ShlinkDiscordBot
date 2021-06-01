@@ -53,90 +53,89 @@ public class ShlinkCreator extends ListenerAdapter {
             // respond with help text, if requested:
             if (StaticMethods.messageMatchesCmd(msg, Constants.HELP_CMD)) {
                 channel.sendMessage(Constants.CMD_CHAR + "addShlink <long URL> [custom slug]\t:\tCreate a short link from <long URL> with optional [custom slug].").queue();
-                return;
-            }
+            } else
 
-            // add short url:
-            if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
-                String[] cmdSplit = msg.getContentRaw().split(" ");
-                if (cmdSplit.length < 2) {
-                    channel.sendMessage("Wrong usage of command; see " + Constants.CMD_CHAR + "help").queue();
-                    return;
+                // add short url:
+                if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
+                    channel.sendMessage(addShortUrl(msg.getContentRaw())).queue();
                 }
-                String longUrl = cmdSplit[1];
-                if (!longUrl.startsWith("http")) {
-                    longUrl = "http://" + longUrl;
-                }
-                String customSlug = null;
-                if (cmdSplit.length > 2) {
-                    customSlug = cmdSplit[2];
-                }
-                LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
+        }
+    }
 
-                // json structure:
-                Map<Object, Object> data = new HashMap<>();
-                data.put("longUrl", longUrl);
-                if (customSlug != null) {
-                    data.put("customSlug", customSlug);
-                }
-                data.put("findIfExists", true);
-                data.put("validateUrl", true);
-                String jsonBody = StaticMethods.buildJsonFromMap(data);
-                LOGGER.debug("jsonBody: {}", jsonBody);
+    /**
+     * Create a new short link from {@code messageText} and return {@link String} as answer.
+     *
+     * @param messageText the message text
+     * @return a {@link String} containing an answer (error messages, final short link, etc.)
+     */
+    private String addShortUrl(String messageText) {
+        String[] cmdSplit = messageText.split(" ");
+        if (cmdSplit.length < 2) {
+            return "Wrong usage of command; see " + Constants.CMD_CHAR + "help";
+        }
+        String longUrl = cmdSplit[1];
+        if (!longUrl.startsWith("http")) {
+            longUrl = "http://" + longUrl;
+        }
+        String customSlug = null;
+        if (cmdSplit.length > 2) {
+            customSlug = cmdSplit[2];
+        }
+        LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
 
-                RequestBody body = RequestBody.create(jsonBody, Constants.TYPE_JSON);
-                Request request = new Request.Builder()
-                        .url(shlinkUrl + Constants.POST_URL)
-                        .header(Constants.API_KEY_HEADER, shlinkApiKey)
-                        .post(body)
-                        .build();
+        // json structure:
+        Map<Object, Object> data = new HashMap<>();
+        data.put("longUrl", longUrl);
+        if (customSlug != null) {
+            data.put("customSlug", customSlug);
+        }
+        data.put("findIfExists", true);
+        data.put("validateUrl", true);
+        String jsonBody = StaticMethods.buildJsonFromMap(data);
+        LOGGER.debug("jsonBody: {}", jsonBody);
 
-                Response response = null;
-                try {
-                    response = httpClient.newCall(request).execute();
-                } catch (IOException e) {
-                    LOGGER.warn("Error on connecting to Shlink server", e);
-                    channel.sendMessage("Error on connecting to Shlink server!").queue();
-                    return;
-                }
-                if (!response.isSuccessful()) {
-                    String responseBody = null;
-                    try {
-                        responseBody = Objects.requireNonNull(response.body()).string();
-                    } catch (IOException | NullPointerException ignored) {
-                    }
-                    LOGGER.info("Error with Shlink's response {} with body {}", response, responseBody);
-                    channel.sendMessage("Error with Shlink's response!").queue();
+        RequestBody body = RequestBody.create(jsonBody, Constants.TYPE_JSON);
+        Request request = new Request.Builder()
+                .url(shlinkUrl + Constants.POST_URL)
+                .header(Constants.API_KEY_HEADER, shlinkApiKey)
+                .post(body)
+                .build();
 
-                    response.close();
-                    return;
-                }
-
-                String responseJson;
+        String responseJson = null;
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                String bodyDetails = null;
                 try {
                     responseJson = Objects.requireNonNull(response.body()).string();
-                    LOGGER.debug("responseJson: {}", responseJson);
-                } catch (IOException | NullPointerException e) {
-                    LOGGER.warn("Error on extracting response", e);
-                    channel.sendMessage("Error on extracting response!").queue();
-                    return;
-                } finally {
-                    response.close();
+                    bodyDetails = objectMapper.readTree(responseJson).path("detail").asText();
+                } catch (IOException | NullPointerException ignored) {
                 }
 
-                String extractedShortUrl;
-                try {
-                    extractedShortUrl = objectMapper.readTree(responseJson).path("shortUrl").asText();
-                } catch (JsonProcessingException e) {
-                    LOGGER.warn("Error on parsing json", e);
-                    channel.sendMessage("Error on parsing json!").queue();
-                    return;
-                }
-
-                LOGGER.debug("extractedShortUrl: {}", extractedShortUrl);
-                channel.sendMessage("Here you go: " + extractedShortUrl).queue();
-                return;
+                LOGGER.info("Error with Shlink's response {} with body {} and bodyDetails {}", response, responseJson, bodyDetails);
+                return "Error with Shlink's response: " + bodyDetails + "!";
             }
+
+            try {
+                responseJson = Objects.requireNonNull(response.body()).string();
+                LOGGER.debug("responseJson: {}", responseJson);
+            } catch (IOException | NullPointerException e) {
+                LOGGER.warn("Error on extracting response", e);
+                return "Error on extracting response!";
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Error on connecting to Shlink server", e);
+            return "Error on connecting to Shlink server!";
         }
+
+        String extractedShortUrl;
+        try {
+            extractedShortUrl = objectMapper.readTree(responseJson).path("shortUrl").asText();
+        } catch (JsonProcessingException e) {
+            LOGGER.warn("Error on parsing json", e);
+            return "Error on parsing json!";
+        }
+
+        LOGGER.debug("extractedShortUrl: {}", extractedShortUrl);
+        return "Here you go: " + extractedShortUrl;
     }
 }
