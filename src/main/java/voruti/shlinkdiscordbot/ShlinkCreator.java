@@ -50,9 +50,9 @@ public class ShlinkCreator extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().getIdLong() != botId) {
-            LOGGER.debug("Received message: {}", event.getMessage());
-
             Message msg = event.getMessage();
+            LOGGER.debug("Received message: {}", msg);
+
             MessageChannel channel = event.getChannel();
 
             // respond with help text, if requested:

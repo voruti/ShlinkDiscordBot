@@ -28,12 +28,12 @@ class StaticMethodsTest {
     @Test
     void messageMatchesCmd_Help() {
         // arrange:
-        Message message1 = new MessageBuilder().append(Constants.CMD_CHAR + "help").build();
-        Message message2 = new MessageBuilder().append(Constants.CMD_CHAR + "hilfe").build();
-        Message message3 = new MessageBuilder().append(Constants.CMD_CHAR + "help abc").build();
-        Message message4 = new MessageBuilder().append(Constants.CMD_CHAR + "help" + Constants.CMD_CHAR).build();
-        Message message5 = new MessageBuilder().append("help" + Constants.CMD_CHAR).build();
-        Message message6 = new MessageBuilder().append(Constants.CMD_CHAR + "abc").build();
+        Message message1 = new MessageBuilder().append("!help").build();
+        Message message2 = new MessageBuilder().append("!hilfe").build();
+        Message message3 = new MessageBuilder().append("!help abc").build();
+        Message message4 = new MessageBuilder().append("!help!").build();
+        Message message5 = new MessageBuilder().append("help!").build();
+        Message message6 = new MessageBuilder().append("!abc").build();
 
         // act:
         boolean result1 = StaticMethods.messageMatchesCmd(message1, Constants.HELP_CMD);
@@ -55,12 +55,12 @@ class StaticMethodsTest {
     @Test
     void messageMatchesCmd_AddShlink() {
         // arrange:
-        Message message1 = new MessageBuilder().append(Constants.CMD_CHAR + "addsl").build();
-        Message message2 = new MessageBuilder().append(Constants.CMD_CHAR + "addShlink").build();
-        Message message3 = new MessageBuilder().append(Constants.CMD_CHAR + "addShlink https://www.example.com example").build();
-        Message message4 = new MessageBuilder().append(Constants.CMD_CHAR + "addsl example.com").build();
-        Message message5 = new MessageBuilder().append("addsl" + Constants.CMD_CHAR).build();
-        Message message6 = new MessageBuilder().append(Constants.CMD_CHAR + "add Shlink").build();
+        Message message1 = new MessageBuilder().append("!addsl").build();
+        Message message2 = new MessageBuilder().append("!addShlink").build();
+        Message message3 = new MessageBuilder().append("!addShlink https://www.example.com example").build();
+        Message message4 = new MessageBuilder().append("!addsl example.com").build();
+        Message message5 = new MessageBuilder().append("addsl!").build();
+        Message message6 = new MessageBuilder().append("!add Shlink").build();
 
         // act:
         boolean result1 = StaticMethods.messageMatchesCmd(message1, Constants.ADD_SHLINK_CMD);
