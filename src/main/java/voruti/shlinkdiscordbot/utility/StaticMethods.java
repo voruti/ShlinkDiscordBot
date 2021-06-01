@@ -42,7 +42,7 @@ public final class StaticMethods {
      * @param objectObjectMap the {@link Map} that should be converted to a JSON {@link String}
      * @throws IllegalArgumentException if the {@link Map} can't be converted to JSON
      */
-    public static String buildJsonFromMap(Map<Object, Object> objectObjectMap) {
+    public static String buildJsonFromMap(Map<Object, Object> objectObjectMap) throws IllegalArgumentException {
         try {
             return objectMapper.writeValueAsString(objectObjectMap);
         } catch (JsonProcessingException e) {

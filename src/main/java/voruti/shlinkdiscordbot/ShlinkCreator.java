@@ -96,7 +96,13 @@ public class ShlinkCreator extends ListenerAdapter {
         }
         data.put("findIfExists", true);
         data.put("validateUrl", true);
-        String jsonBody = StaticMethods.buildJsonFromMap(data);
+        String jsonBody;
+        try {
+            jsonBody = StaticMethods.buildJsonFromMap(data);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Error on creating JSON for request", e);
+            return "Error on creating JSON for request!";
+        }
         LOGGER.debug("jsonBody: {}", jsonBody);
 
         RequestBody body = RequestBody.create(jsonBody, Constants.TYPE_JSON);
