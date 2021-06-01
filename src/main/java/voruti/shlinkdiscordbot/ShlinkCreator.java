@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Listens to "help" and "add new Shlink" commands and processes them.
+ */
 public class ShlinkCreator extends ListenerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShlinkCreator.class);
@@ -33,6 +36,7 @@ public class ShlinkCreator extends ListenerAdapter {
     private final OkHttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+
     public ShlinkCreator(long botId, String shlinkUrl, String shlinkApiKey) {
         this.botId = botId;
         this.shlinkUrl = shlinkUrl;
@@ -41,6 +45,7 @@ public class ShlinkCreator extends ListenerAdapter {
         this.httpClient = new OkHttpClient();
         this.objectMapper = new ObjectMapper();
     }
+
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
