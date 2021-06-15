@@ -88,6 +88,12 @@ public class ShlinkCreator extends ListenerAdapter {
         }
         LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
 
+        // validate longUrl (from https://regexr.com/3e6m0):
+        if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)")) {
+            LOGGER.info("Invalid URL \"{}\"", longUrl);
+            return "Invalid URL \"" + longUrl + "\"!";
+        }
+
         // json structure:
         Map<Object, Object> data = new HashMap<>();
         data.put("longUrl", longUrl);
@@ -95,7 +101,7 @@ public class ShlinkCreator extends ListenerAdapter {
             data.put("customSlug", customSlug);
         }
         data.put("findIfExists", true);
-        data.put("validateUrl", true);
+        //data.put("validateUrl", true);
         String jsonBody;
         try {
             jsonBody = StaticMethods.buildJsonFromMap(data);
