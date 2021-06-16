@@ -91,7 +91,7 @@ public class ShlinkCreator extends ListenerAdapter {
         // validate longUrl (from https://regexr.com/3e6m0):
         if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)")) {
             LOGGER.info("Invalid URL \"{}\"", longUrl);
-            return "Invalid URL " + longUrl + "!";
+            return "Invalid URL \"" + longUrl + "\"!";
         }
 
         // json structure:
@@ -129,7 +129,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
 
                 LOGGER.info("Error with Shlink's response {} with body {} and bodyDetails {}", response, responseJson, bodyDetails);
-                return "Error with Shlink's response: " + bodyDetails + "!";
+                return "Error with Shlink's response: \"" + bodyDetails + "\"!";
             }
 
             try {
