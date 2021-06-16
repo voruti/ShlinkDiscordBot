@@ -105,6 +105,6 @@ class ShlinkCreatorTest {
         shlinkCreator.onMessageReceived(event);
 
         // assert:
-        verify(channel).sendMessage("Error with Shlink's response: \"null\"!");
+        verify(channel).sendMessage("Error with Shlink's response: null!");
     }
 }
