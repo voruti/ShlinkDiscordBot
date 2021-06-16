@@ -79,9 +79,6 @@ public class ShlinkCreator extends ListenerAdapter {
             return "Wrong usage of command; see " + Constants.CMD_CHAR + "help";
         }
         String longUrl = cmdSplit[1];
-        if (!longUrl.startsWith("http")) {
-            longUrl = "http://" + longUrl;
-        }
         String customSlug = null;
         if (cmdSplit.length > 2) {
             customSlug = cmdSplit[2];
@@ -91,7 +88,11 @@ public class ShlinkCreator extends ListenerAdapter {
         // validate longUrl (from https://regexr.com/3e6m0):
         if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)")) {
             LOGGER.info("Invalid URL \"{}\"", longUrl);
-            return "Invalid URL \"" + longUrl + "\"!";
+            return String.format("Invalid URL \"%s\"!", longUrl);
+        }
+
+        if (!longUrl.startsWith("http")) {
+            longUrl = "http://" + longUrl;
         }
 
         // json structure:
