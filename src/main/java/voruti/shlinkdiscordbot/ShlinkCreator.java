@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Listens to "help" and "add new Shlink" commands and processes them.
@@ -64,6 +67,30 @@ public class ShlinkCreator extends ListenerAdapter {
                 if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
                     channel.sendMessage(addShortUrl(msg.getContentRaw())).queue();
                 }
+        }
+    }
+
+    @Override
+    public void onSlashCommand(@NotNull SlashCommandEvent event) {
+        LOGGER.debug("Received slash command: {}", event.getName());
+
+        switch (event.getName()) {
+            case "shlink":
+                // Tell discord we received the command, send a thinking... message to the user:
+                event.deferReply(true).queue();
+
+                StringJoiner messageTextBuilder = new StringJoiner(" ");
+                messageTextBuilder.add(event.getName());
+                OptionMapping optionMappingLongUrl = event.getOption("long_url");
+                messageTextBuilder.add(optionMappingLongUrl != null ? optionMappingLongUrl.getAsString() : "");
+                OptionMapping optionMappingCustomSlug = event.getOption("custom_slug");
+                messageTextBuilder.add(optionMappingCustomSlug != null ? optionMappingCustomSlug.getAsString() : "");
+
+                event.getHook().sendMessage(addShortUrl(messageTextBuilder.toString().strip())).queue();
+                break;
+
+            default:
+                event.reply("I can't handle that command right now :(").setEphemeral(true).queue();
         }
     }
 

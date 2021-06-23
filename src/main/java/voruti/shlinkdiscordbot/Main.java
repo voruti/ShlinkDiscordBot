@@ -2,6 +2,9 @@ package voruti.shlinkdiscordbot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import voruti.shlinkdiscordbot.utility.StaticMethods;
@@ -39,6 +42,31 @@ public class Main {
 
             jda.addEventListener(new ShlinkCreator(jda.getSelfUser().getIdLong(), shlinkUrl, shlinkApiKey));
             LOGGER.info("ShlinkCreator event listener added");
+
+            jda.updateCommands()
+                    .addCommands(
+                            new CommandData("shlink", "Creates a new Shlink (a short link).")
+                                    .addOptions(
+                                            new OptionData(
+                                                    OptionType.STRING,
+                                                    "long_url",
+                                                    "The (long) URL that should be shortened"
+                                            )
+                                                    .setRequired(true)
+                                    )
+                                    .addOptions(
+                                            new OptionData(
+                                                    OptionType.STRING,
+                                                    "custom_slug",
+                                                    String.format(
+                                                            "The custom slug; i.e. \"example\" will result in %sexample",
+                                                            shlinkUrl.endsWith("/") ? shlinkUrl : shlinkUrl + "/"
+                                                    )
+                                            )
+                                    )
+                    )
+                    .queue();
+            LOGGER.info("Slash command updated");
         } catch (LoginException | IllegalArgumentException e) {
             LOGGER.error("Exception occurred", e);
         }
