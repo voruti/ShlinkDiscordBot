@@ -105,7 +105,7 @@ public class ShlinkCreator extends ListenerAdapter {
         switch (event.getName()) {
             case "shlink":
                 // Tell discord we received the command, send a thinking... message to the user:
-                event.deferReply(true).queue();
+                event.deferReply().queue();
 
                 StringJoiner messageTextBuilder = new StringJoiner(" ");
                 messageTextBuilder.add(event.getName());
