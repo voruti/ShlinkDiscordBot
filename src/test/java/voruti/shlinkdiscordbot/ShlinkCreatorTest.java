@@ -1,10 +1,13 @@
 package voruti.shlinkdiscordbot;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.internal.entities.UserById;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +29,11 @@ class ShlinkCreatorTest {
 
     @BeforeAll
     static void beforeAll() {
-        shlinkCreator = new ShlinkCreator(5L, "http://example.com", "example");
+        JDA jda = mock(JDA.class);
+        CommandListUpdateAction commandListUpdateAction = mock(CommandListUpdateAction.class);
+        when(jda.updateCommands()).thenReturn(commandListUpdateAction);
+        when(commandListUpdateAction.addCommands(any(CommandData.class))).thenReturn(commandListUpdateAction);
+        shlinkCreator = new ShlinkCreator(jda, 5L, "http://example.com", "example");
     }
 
     @BeforeEach
