@@ -2,12 +2,16 @@ package voruti.shlinkdiscordbot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -40,13 +44,37 @@ public class ShlinkCreator extends ListenerAdapter {
     private final ObjectMapper objectMapper;
 
 
-    public ShlinkCreator(long botId, String shlinkUrl, String shlinkApiKey) {
+    public ShlinkCreator(JDA jda, long botId, String shlinkUrl, String shlinkApiKey) {
         this.botId = botId;
         this.shlinkUrl = shlinkUrl;
         this.shlinkApiKey = shlinkApiKey;
 
         this.httpClient = new OkHttpClient();
         this.objectMapper = new ObjectMapper();
+
+        jda.updateCommands()
+                .addCommands(
+                        new CommandData("shlink", "Creates a new Shlink (a short link).")
+                                .addOptions(
+                                        new OptionData(
+                                                OptionType.STRING,
+                                                "long_url",
+                                                "The (long) URL that should be shortened"
+                                        ).setRequired(true)
+                                )
+                                .addOptions(
+                                        new OptionData(
+                                                OptionType.STRING,
+                                                "custom_slug",
+                                                String.format(
+                                                        "The custom slug; i.e. \"example\" will result in %sexample",
+                                                        shlinkUrl.endsWith("/") ? shlinkUrl : shlinkUrl + "/"
+                                                )
+                                        )
+                                )
+                )
+                .queue();
+        LOGGER.info("Slash commands updated");
     }
 
 
