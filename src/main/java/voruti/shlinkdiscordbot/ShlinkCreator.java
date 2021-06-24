@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * Listens to "help" and "add new Shlink" commands and processes them.
@@ -93,7 +92,21 @@ public class ShlinkCreator extends ListenerAdapter {
 
                 // add short url:
                 if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
-                    channel.sendMessage(addShortUrl(msg.getContentRaw())).queue();
+                    String[] cmdSplit = msg.getContentRaw().split(" ");
+                    String answer;
+                    if (cmdSplit.length < 2) {
+                        answer = "Wrong usage of command; see " + Constants.CMD_CHAR + "help";
+                    } else {
+                        String longUrl = cmdSplit[1];
+                        String customSlug = null;
+                        if (cmdSplit.length > 2) {
+                            customSlug = cmdSplit[2];
+                        }
+                        LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
+
+                        answer = addShortUrl(longUrl, customSlug);
+                    }
+                    channel.sendMessage(answer).queue();
                 }
         }
     }
@@ -107,14 +120,13 @@ public class ShlinkCreator extends ListenerAdapter {
                 // Tell discord we received the command, send a thinking... message to the user:
                 event.deferReply().queue();
 
-                StringJoiner messageTextBuilder = new StringJoiner(" ");
-                messageTextBuilder.add(event.getName());
                 OptionMapping optionMappingLongUrl = event.getOption("long_url");
-                messageTextBuilder.add(optionMappingLongUrl != null ? optionMappingLongUrl.getAsString() : "");
                 OptionMapping optionMappingCustomSlug = event.getOption("custom_slug");
-                messageTextBuilder.add(optionMappingCustomSlug != null ? optionMappingCustomSlug.getAsString() : "");
 
-                event.getHook().sendMessage(addShortUrl(messageTextBuilder.toString().strip())).queue();
+                event.getHook().sendMessage(addShortUrl(
+                        Objects.requireNonNull(optionMappingLongUrl).getAsString(),
+                        optionMappingCustomSlug == null ? null : optionMappingCustomSlug.getAsString())
+                ).queue();
                 break;
 
             default:
@@ -125,21 +137,11 @@ public class ShlinkCreator extends ListenerAdapter {
     /**
      * Create a new short link from {@code messageText} and return {@link String} as answer.
      *
-     * @param messageText the message text
+     * @param longUrl    the long URL that should be shortened
+     * @param customSlug an optional custom text that should be part of the short/new URL; {@code null} to unset
      * @return a {@link String} containing an answer (error messages, final short link, etc.)
      */
-    private String addShortUrl(String messageText) {
-        String[] cmdSplit = messageText.split(" ");
-        if (cmdSplit.length < 2) {
-            return "Wrong usage of command; see " + Constants.CMD_CHAR + "help";
-        }
-        String longUrl = cmdSplit[1];
-        String customSlug = null;
-        if (cmdSplit.length > 2) {
-            customSlug = cmdSplit[2];
-        }
-        LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
-
+    private String addShortUrl(String longUrl, String customSlug) {
         // validate longUrl (from https://regexr.com/3e6m0):
         if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)")) {
             LOGGER.info("Invalid URL \"{}\"", longUrl);
