@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
@@ -146,6 +147,9 @@ class ShlinkCreatorTest {
 
         ReplyAction replyAction = mock(ReplyAction.class);
         when(slashCommandEvent.deferReply()).thenReturn(replyAction);
+        OptionMapping optionMapping = mock(OptionMapping.class);
+        when(slashCommandEvent.getOption("long_url")).thenReturn(optionMapping);
+        when(optionMapping.getAsString()).thenReturn("http://example.com");
         InteractionHook interactionHook = mock(InteractionHook.class);
         when(slashCommandEvent.getHook()).thenReturn(interactionHook);
         @SuppressWarnings("unchecked")
