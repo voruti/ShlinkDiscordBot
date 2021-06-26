@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -105,7 +104,7 @@ public class ShlinkCreator extends ListenerAdapter {
                         }
                         LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
 
-                        answer = addShortUrl(longUrl, customSlug).getText();
+                        answer = addShortUrl(longUrl, customSlug);
                     }
                     channel.sendMessage(answer).queue();
                 }
@@ -119,16 +118,15 @@ public class ShlinkCreator extends ListenerAdapter {
         switch (event.getName()) {
             case "shlink":
                 // Tell discord we received the command, send a thinking... message to the user:
-                event.deferReply().setEphemeral(true).queue();
+                event.deferReply().queue();
 
                 OptionMapping optionMappingLongUrl = event.getOption("long_url");
                 OptionMapping optionMappingCustomSlug = event.getOption("custom_slug");
 
-                addShortUrl(
+                event.getHook().sendMessage(addShortUrl(
                         Objects.requireNonNull(optionMappingLongUrl).getAsString(),
-                        optionMappingCustomSlug == null ? null : optionMappingCustomSlug.getAsString()
-                )
-                        .sendWith(event.getHook());
+                        optionMappingCustomSlug == null ? null : optionMappingCustomSlug.getAsString())
+                ).queue();
                 break;
 
             default:
@@ -141,13 +139,13 @@ public class ShlinkCreator extends ListenerAdapter {
      *
      * @param longUrl    the long URL that should be shortened
      * @param customSlug an optional custom text that should be part of the short/new URL; {@code null} to unset
-     * @return a {@link Answer} containing an {@link String} (error messages, final short link, etc.) and if the message should be ephemeral
+     * @return a {@link String} containing an answer (error messages, final short link, etc.)
      */
-    private Answer addShortUrl(String longUrl, String customSlug) {
+    private String addShortUrl(String longUrl, String customSlug) {
         // validate longUrl (from https://regexr.com/3e6m0):
         if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)")) {
             LOGGER.info("Invalid URL \"{}\"", longUrl);
-            return new Answer(String.format("Invalid URL \"%s\"!", longUrl), true);
+            return String.format("Invalid URL \"%s\"!", longUrl);
         }
 
         if (!longUrl.startsWith("http")) {
@@ -167,7 +165,7 @@ public class ShlinkCreator extends ListenerAdapter {
             jsonBody = StaticMethods.buildJsonFromMap(data);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Error on creating JSON for request", e);
-            return new Answer("Error on creating JSON for request!", true);
+            return "Error on creating JSON for request!";
         }
         LOGGER.debug("jsonBody: {}", jsonBody);
 
@@ -189,7 +187,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
 
                 LOGGER.info("Error with Shlink's response {} with body {} and bodyDetails {}", response, responseJson, bodyDetails);
-                return new Answer("Error with Shlink's response: \"" + bodyDetails + "\"!", true);
+                return "Error with Shlink's response: \"" + bodyDetails + "\"!";
             }
 
             try {
@@ -197,11 +195,11 @@ public class ShlinkCreator extends ListenerAdapter {
                 LOGGER.debug("responseJson: {}", responseJson);
             } catch (IOException | NullPointerException e) {
                 LOGGER.warn("Error on extracting response", e);
-                return new Answer("Error on extracting response!", true);
+                return "Error on extracting response!";
             }
         } catch (IOException e) {
             LOGGER.warn("Error on connecting to Shlink server", e);
-            return new Answer("Error on connecting to Shlink server!", true);
+            return "Error on connecting to Shlink server!";
         }
 
         String extractedShortUrl;
@@ -209,56 +207,10 @@ public class ShlinkCreator extends ListenerAdapter {
             extractedShortUrl = objectMapper.readTree(responseJson).path("shortUrl").asText();
         } catch (JsonProcessingException e) {
             LOGGER.warn("Error on parsing json", e);
-            return new Answer("Error on parsing json!", true);
+            return "Error on parsing json!";
         }
 
         LOGGER.debug("extractedShortUrl: {}", extractedShortUrl);
-        return new Answer("Here you go: " + extractedShortUrl);
-    }
-
-
-    public static class Answer {
-
-        private final String text;
-        private final boolean ephemeral;
-
-
-        public Answer(String text) {
-            this(text, false);
-        }
-
-        public Answer(String text, boolean ephemeral) {
-            this.text = text;
-            this.ephemeral = ephemeral;
-        }
-
-
-        /**
-         * Submit a request for execution (.queue()) with this {@link Answer Answer's} text and ephemeral.
-         *
-         * @param interactionHook the {@link InteractionHook} to send the message with
-         */
-        public void sendWith(InteractionHook interactionHook) {
-            interactionHook.sendMessage(text).setEphemeral(ephemeral).queue();
-        }
-
-
-        /**
-         * Get the {@link Answer#text}.
-         *
-         * @return the text
-         */
-        public String getText() {
-            return text;
-        }
-
-        /**
-         * Get the {@link Answer#ephemeral}.
-         *
-         * @return the ephemeral
-         */
-        public boolean isEphemeral() {
-            return ephemeral;
-        }
+        return "Here you go: " + extractedShortUrl;
     }
 }

@@ -167,7 +167,6 @@ class ShlinkCreatorTest {
 
         ReplyAction replyAction = mock(ReplyAction.class);
         when(slashCommandEvent.deferReply()).thenReturn(replyAction);
-        when(replyAction.setEphemeral(true)).thenReturn(replyAction);
         OptionMapping optionMapping = mock(OptionMapping.class);
         when(slashCommandEvent.getOption("long_url")).thenReturn(optionMapping);
         when(optionMapping.getAsString()).thenReturn("http://example.com");
@@ -176,7 +175,6 @@ class ShlinkCreatorTest {
         @SuppressWarnings("unchecked")
         WebhookMessageAction<Message> webhookMessageAction = (WebhookMessageAction<Message>) mock(WebhookMessageAction.class);
         when(interactionHook.sendMessage(any(String.class))).thenReturn(webhookMessageAction);
-        when(webhookMessageAction.setEphemeral(true)).thenReturn(webhookMessageAction);
 
         // act:
         shlinkCreator.onSlashCommand(slashCommandEvent);
