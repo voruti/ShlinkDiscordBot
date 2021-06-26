@@ -167,6 +167,7 @@ class ShlinkCreatorTest {
 
         ReplyAction replyAction = mock(ReplyAction.class);
         when(slashCommandEvent.deferReply()).thenReturn(replyAction);
+        when(replyAction.setEphemeral(true)).thenReturn(replyAction);
         OptionMapping optionMapping = mock(OptionMapping.class);
         when(slashCommandEvent.getOption("long_url")).thenReturn(optionMapping);
         when(optionMapping.getAsString()).thenReturn("http://example.com");
