@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -104,7 +105,7 @@ public class ShlinkCreator extends ListenerAdapter {
                         }
                         LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
 
-                        answer = addShortUrl(longUrl, customSlug);
+                        answer = addShortUrl(longUrl, customSlug).getText();
                     }
                     channel.sendMessage(answer).queue();
                 }
@@ -123,10 +124,11 @@ public class ShlinkCreator extends ListenerAdapter {
                 OptionMapping optionMappingLongUrl = event.getOption("long_url");
                 OptionMapping optionMappingCustomSlug = event.getOption("custom_slug");
 
-                event.getHook().sendMessage(addShortUrl(
+                addShortUrl(
                         Objects.requireNonNull(optionMappingLongUrl).getAsString(),
-                        optionMappingCustomSlug == null ? null : optionMappingCustomSlug.getAsString())
-                ).queue();
+                        optionMappingCustomSlug == null ? null : optionMappingCustomSlug.getAsString()
+                )
+                        .sendWith(event.getHook());
                 break;
 
             default:
@@ -139,13 +141,13 @@ public class ShlinkCreator extends ListenerAdapter {
      *
      * @param longUrl    the long URL that should be shortened
      * @param customSlug an optional custom text that should be part of the short/new URL; {@code null} to unset
-     * @return a {@link String} containing an answer (error messages, final short link, etc.)
+     * @return a {@link Answer} containing an {@link String} (error messages, final short link, etc.) and if the message should be ephemeral
      */
-    private String addShortUrl(String longUrl, String customSlug) {
+    private Answer addShortUrl(String longUrl, String customSlug) {
         // validate longUrl (from https://regexr.com/3e6m0):
         if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)")) {
             LOGGER.info("Invalid URL \"{}\"", longUrl);
-            return String.format("Invalid URL \"%s\"!", longUrl);
+            return new Answer(String.format("Invalid URL \"%s\"!", longUrl), true);
         }
 
         if (!longUrl.startsWith("http")) {
@@ -165,7 +167,7 @@ public class ShlinkCreator extends ListenerAdapter {
             jsonBody = StaticMethods.buildJsonFromMap(data);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Error on creating JSON for request", e);
-            return "Error on creating JSON for request!";
+            return new Answer("Error on creating JSON for request!", true);
         }
         LOGGER.debug("jsonBody: {}", jsonBody);
 
@@ -187,7 +189,7 @@ public class ShlinkCreator extends ListenerAdapter {
                 }
 
                 LOGGER.info("Error with Shlink's response {} with body {} and bodyDetails {}", response, responseJson, bodyDetails);
-                return "Error with Shlink's response: \"" + bodyDetails + "\"!";
+                return new Answer("Error with Shlink's response: \"" + bodyDetails + "\"!", true);
             }
 
             try {
@@ -195,11 +197,11 @@ public class ShlinkCreator extends ListenerAdapter {
                 LOGGER.debug("responseJson: {}", responseJson);
             } catch (IOException | NullPointerException e) {
                 LOGGER.warn("Error on extracting response", e);
-                return "Error on extracting response!";
+                return new Answer("Error on extracting response!", true);
             }
         } catch (IOException e) {
             LOGGER.warn("Error on connecting to Shlink server", e);
-            return "Error on connecting to Shlink server!";
+            return new Answer("Error on connecting to Shlink server!", true);
         }
 
         String extractedShortUrl;
@@ -207,10 +209,56 @@ public class ShlinkCreator extends ListenerAdapter {
             extractedShortUrl = objectMapper.readTree(responseJson).path("shortUrl").asText();
         } catch (JsonProcessingException e) {
             LOGGER.warn("Error on parsing json", e);
-            return "Error on parsing json!";
+            return new Answer("Error on parsing json!", true);
         }
 
         LOGGER.debug("extractedShortUrl: {}", extractedShortUrl);
-        return "Here you go: " + extractedShortUrl;
+        return new Answer("Here you go: " + extractedShortUrl);
+    }
+
+
+    public static class Answer {
+
+        private final String text;
+        private final boolean ephemeral;
+
+
+        public Answer(String text) {
+            this(text, false);
+        }
+
+        public Answer(String text, boolean ephemeral) {
+            this.text = text;
+            this.ephemeral = ephemeral;
+        }
+
+
+        /**
+         * Submit a request for execution (.queue()) with this {@link Answer Answer's} text and ephemeral.
+         *
+         * @param interactionHook the {@link InteractionHook} to send the message with
+         */
+        public void sendWith(InteractionHook interactionHook) {
+            interactionHook.sendMessage(text).setEphemeral(ephemeral).queue();
+        }
+
+
+        /**
+         * Get the {@link Answer#text}.
+         *
+         * @return the text
+         */
+        public String getText() {
+            return text;
+        }
+
+        /**
+         * Get the {@link Answer#ephemeral}.
+         *
+         * @return the ephemeral
+         */
+        public boolean isEphemeral() {
+            return ephemeral;
+        }
     }
 }
