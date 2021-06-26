@@ -123,6 +123,26 @@ class ShlinkCreatorTest {
         verify(channel).sendMessage("Error with Shlink's response: \"null\"!");
     }
 
+    @Test
+    void onMessageReceived_AddShlinkMessageWCustomSlug() {
+        // arrange:
+        User author = new UserById(10L);
+        when(messageReceivedEvent.getAuthor()).thenReturn(author);
+
+        Message message = new MessageBuilder().append("!addShlink example.com test").build();
+        when(messageReceivedEvent.getMessage()).thenReturn(message);
+        MessageChannel channel = mock(MessageChannel.class);
+        when(messageReceivedEvent.getChannel()).thenReturn(channel);
+
+        when(channel.sendMessage(any(CharSequence.class))).thenReturn(mock(MessageAction.class));
+
+        // act:
+        shlinkCreator.onMessageReceived(messageReceivedEvent);
+
+        // assert:
+        verify(channel).sendMessage("Error with Shlink's response: \"null\"!");
+    }
+
 
     @Test
     void onSlashCommand_RandomCommand() {
@@ -155,6 +175,7 @@ class ShlinkCreatorTest {
         @SuppressWarnings("unchecked")
         WebhookMessageAction<Message> webhookMessageAction = (WebhookMessageAction<Message>) mock(WebhookMessageAction.class);
         when(interactionHook.sendMessage(any(String.class))).thenReturn(webhookMessageAction);
+        when(webhookMessageAction.setEphemeral(true)).thenReturn(webhookMessageAction);
 
         // act:
         shlinkCreator.onSlashCommand(slashCommandEvent);
