@@ -119,7 +119,7 @@ public class ShlinkCreator extends ListenerAdapter {
         switch (event.getName()) {
             case "shlink":
                 // Tell discord we received the command, send a thinking... message to the user:
-                event.deferReply().queue();
+                event.deferReply().setEphemeral(true).queue();
 
                 OptionMapping optionMappingLongUrl = event.getOption("long_url");
                 OptionMapping optionMappingCustomSlug = event.getOption("custom_slug");
