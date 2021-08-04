@@ -37,7 +37,7 @@ public class Main {
                     .build();
             jda.awaitReady();
 
-            jda.addEventListener(new ShlinkCreator(jda, jda.getSelfUser().getIdLong(), shlinkUrl, shlinkApiKey));
+            jda.addEventListener(new ShlinkCreator(jda, shlinkUrl, shlinkApiKey));
             LOGGER.info("ShlinkCreator event listener added");
         } catch (LoginException | IllegalArgumentException e) {
             LOGGER.error("Exception occurred", e);

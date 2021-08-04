@@ -33,7 +33,7 @@ class ShlinkCreatorTest {
         CommandListUpdateAction commandListUpdateAction = mock(CommandListUpdateAction.class);
         when(jda.updateCommands()).thenReturn(commandListUpdateAction);
         when(commandListUpdateAction.addCommands(any(CommandData.class))).thenReturn(commandListUpdateAction);
-        shlinkCreator = new ShlinkCreator(jda, 5L, "http://example.com", "example");
+        shlinkCreator = new ShlinkCreator(jda, "http://example.com", "example");
     }
 
     @BeforeEach

@@ -31,7 +31,6 @@ public class ShlinkCreator extends ListenerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShlinkCreator.class);
 
-    private final long botId;
     private final String shlinkUrl;
     private final String shlinkApiKey;
 
@@ -40,8 +39,7 @@ public class ShlinkCreator extends ListenerAdapter {
     private final ObjectMapper objectMapper;
 
 
-    public ShlinkCreator(JDA jda, long botId, String shlinkUrl, String shlinkApiKey) {
-        this.botId = botId;
+    public ShlinkCreator(JDA jda, String shlinkUrl, String shlinkApiKey) {
         this.shlinkUrl = shlinkUrl;
         this.shlinkApiKey = shlinkApiKey;
 
