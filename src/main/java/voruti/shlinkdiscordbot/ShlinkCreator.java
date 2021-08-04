@@ -3,10 +3,7 @@ package voruti.shlinkdiscordbot;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -76,40 +73,6 @@ public class ShlinkCreator extends ListenerAdapter {
         LOGGER.info("Slash commands updated");
     }
 
-
-    @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getAuthor().getIdLong() != botId) {
-            Message msg = event.getMessage();
-            LOGGER.debug("Received message: {}", msg);
-
-            MessageChannel channel = event.getChannel();
-
-            // respond with help text, if requested:
-            if (StaticMethods.messageMatchesCmd(msg, Constants.HELP_CMD)) {
-                channel.sendMessage(Constants.CMD_CHAR + "addShlink <long URL> [custom slug]\t:\tCreate a short link from <long URL> with optional [custom slug].").queue();
-            } else
-
-                // add short url:
-                if (StaticMethods.messageMatchesCmd(msg, Constants.ADD_SHLINK_CMD)) {
-                    String[] cmdSplit = msg.getContentRaw().split(" ");
-                    String answer;
-                    if (cmdSplit.length < 2) {
-                        answer = "Wrong usage of command; see " + Constants.CMD_CHAR + "help";
-                    } else {
-                        String longUrl = cmdSplit[1];
-                        String customSlug = null;
-                        if (cmdSplit.length > 2) {
-                            customSlug = cmdSplit[2];
-                        }
-                        LOGGER.debug("longUrl: {}, customSlug: {}", longUrl, customSlug);
-
-                        answer = addShortUrl(longUrl, customSlug);
-                    }
-                    channel.sendMessage(answer).queue();
-                }
-        }
-    }
 
     @Override
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
