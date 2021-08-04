@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public final class StaticMethods {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
 
     /**
