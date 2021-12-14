@@ -15,7 +15,7 @@ jar {
 }
 
 group 'voruti'
-version '2021.6.1'
+version '2021.12.1'
 
 repositories {
     mavenCentral()
