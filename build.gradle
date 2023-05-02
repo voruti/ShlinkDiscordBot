@@ -39,7 +39,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'
 
