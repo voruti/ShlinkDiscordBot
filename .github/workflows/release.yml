@@ -27,7 +27,10 @@ jobs:
     steps:
       
       # --- from docker-image.yml ---
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag voruti/shlinkdiscordbot:$(date +%s)
       # --- from docker-image.yml ---
