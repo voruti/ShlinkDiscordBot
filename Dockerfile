@@ -2,10 +2,10 @@ FROM gradle:6.7-jdk11-openj9 AS build
 WORKDIR /home/gradle/src
 
 COPY --chown=gradle:gradle build.gradle settings.gradle /home/gradle/src/
-RUN gradle build --no-daemon
+RUN gradle build check --no-daemon
 
 COPY --chown=gradle:gradle src/ /home/gradle/src/src/
-RUN gradle build --no-daemon
+RUN gradle build check --no-daemon
 
 
 FROM openjdk:11.0.16-jre-slim
