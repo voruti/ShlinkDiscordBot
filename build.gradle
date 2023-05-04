@@ -31,21 +31,23 @@ dependencies {
     }
 
     // SLF4J as a facade over Log4j2 required dependencies
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.17.2'
+    def log4j_version = "2.20.0"
+    implementation "org.apache.logging.log4j:log4j-api:$log4j_version"
+    implementation "org.apache.logging.log4j:log4j-core:$log4j_version"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"
 
     // HTTP:
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'
+    def jackson_version = "2.15.0"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jackson_version"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jackson_version"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
 
 
     // JUnit 5:
-    testImplementation(platform('org.junit:junit-bom:5.7.2'))
+    testImplementation(platform('org.junit:junit-bom:5.9.3'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 
     // Mockito:
