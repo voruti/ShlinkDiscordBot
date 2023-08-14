@@ -2,14 +2,7 @@ version: "3"
 services:
 
   shlinkdiscordbot:
-    container_name: shlinkdiscordbot
     build: .
-    env_file: shlinkdiscordbot.env
-    restart: unless-stopped
+    restart: always
 
-    # use custom logger:
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "tcp://127.0.0.1"
-        tag: "shlinkdiscordbot"
+    env_file: shlinkdiscordbot.env
