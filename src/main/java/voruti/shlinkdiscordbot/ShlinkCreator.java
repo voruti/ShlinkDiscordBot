@@ -104,7 +104,7 @@ public class ShlinkCreator extends ListenerAdapter {
      */
     private String addShortUrl(String longUrl, String customSlug) {
         // validate longUrl (originally from https://regexr.com/3e6m0):
-        if (!longUrl.matches("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-z]{2,32}\\b([-a-zA-Z0-9@:%_+.~#?&/=!]*)")) {
+        if (!longUrl.matches("(http(s)?://)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-z]{2,32}\\b([-a-zA-Z0-9@:%_+.~#?&/=!]*)")) {
             LOGGER.info("Invalid URL \"{}\"", longUrl);
             return String.format("Invalid URL \"%s\"!", longUrl);
         }
