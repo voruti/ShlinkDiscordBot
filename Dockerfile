@@ -1,4 +1,4 @@
-FROM gradle:6.7-jdk11-openj9 AS build
+FROM gradle:6.9-jdk11-openj9 AS build
 WORKDIR /home/gradle/src
 
 COPY --chown=gradle:gradle build.gradle settings.gradle /home/gradle/src/
