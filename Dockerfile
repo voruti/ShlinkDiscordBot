@@ -1,4 +1,4 @@
-FROM gradle:8.11-jdk11 AS build
+FROM gradle:8.12-jdk11 AS build
 WORKDIR /home/gradle/src
 
 COPY --chown=gradle:gradle build.gradle settings.gradle /home/gradle/src/
