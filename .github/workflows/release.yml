@@ -11,7 +11,7 @@ jobs:
     outputs:
       on_main: ${{ steps.contains_tag.outputs.retval }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: rickstaa/action-contains-tag@fix_action_retval
@@ -28,7 +28,7 @@ jobs:
       
       # --- from docker-image.yml ---
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Build the Docker image
