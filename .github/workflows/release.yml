@@ -12,8 +12,6 @@ jobs:
       on_main: ${{ steps.contains_tag.outputs.retval }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: rickstaa/action-contains-tag@fix_action_retval
         id: contains_tag
         with:
@@ -29,8 +27,6 @@ jobs:
       # --- from docker-image.yml ---
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag voruti/shlinkdiscordbot:$(date +%s)
       # --- from docker-image.yml ---
