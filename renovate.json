@@ -1,12 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "See all configuration options at https://docs.renovatebot.com/configuration-options/. Use :pinVersions only when your project isn't used by other projects, see https://docs.renovatebot.com/dependency-pinning/#so-whats-best.",
   "extends": [
-    "config:recommended"
+    "config:best-practices",
+    ":pinVersions",
+    ":automergeMinor",
+    ":automergeDigest"
   ],
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
-  ]
+  "osvVulnerabilityAlerts": true
 }
