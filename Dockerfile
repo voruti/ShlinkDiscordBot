@@ -10,7 +10,7 @@ COPY --chown=gradle:gradle src/ /home/gradle/compile/src/
 RUN gradle build check --no-daemon
 
 
-FROM eclipse-temurin:11.0.30_7-jre-noble@sha256:d31955a2913455291fb0059e9f8f96713da60f4838364538ed7a717fca71e2e1
+FROM eclipse-temurin:25.0.2_10-jre-noble@sha256:ae5c0c9b60992045a3a4d07c02fc4fa65c783605fafe050d110498af0fb65a75
 COPY --from=build /home/gradle/compile/build/libs/*all.jar /app/ShlinkDiscordBot.jar
 
 ENTRYPOINT ["java", "-jar", "/app/ShlinkDiscordBot.jar"]
