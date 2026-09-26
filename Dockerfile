@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
 
-FROM gradle:8.14-jdk11@sha256:cbff7f23c0bdf5848da656311a136d7d801e81a5044eab584adac3b5012fc1cc AS build
+FROM gradle:8.14-jdk11@sha256:0677b2defdf9121bc6ee32744841b2173a13c2f4769a30a72d60efbe7b900f9b AS build
 WORKDIR /home/gradle/compile
 
 COPY --chown=gradle:gradle build.gradle settings.gradle /home/gradle/compile/
